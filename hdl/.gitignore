@@ -1,0 +1,18 @@
+# Exclude everything
+*
+
+# Include this file
+!.gitignore
+
+# Include README.md
+!README.md
+
+# Include folders
+!*/
+
+# Include files commonly used in Vivado
+!*.vhd
+!*.xdc
+
+# Include Tcl scripts
+!*.tcl
