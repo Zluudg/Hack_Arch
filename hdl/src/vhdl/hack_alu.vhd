@@ -10,13 +10,9 @@
 -- Description: The ALU for the Hack CPU as designed by Shimon Shocken and
 -- Noam Nisan
 ----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_SIGNED.ALL;
-
-library work;
 use work.hack_shared.all;
 
 entity hack_alu is

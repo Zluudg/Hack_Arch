@@ -10,12 +10,8 @@
 -- Description: Control logic and instruction decoder for the Hack CPU
 -- as designed by Shimon Shocken and Noam Nisan
 ----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
-library work;
 use work.hack_shared.all;
 
 entity hack_ctrl is

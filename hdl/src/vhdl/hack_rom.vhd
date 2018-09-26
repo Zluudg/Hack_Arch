@@ -9,14 +9,10 @@
 -- Target Devices: XC7A15T-1CPG236C
 -- Description: The instruction memory for the Hack Arch
 ----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.NUMERIC_STD.ALL;
-
-library work;
 use work.hack_shared.all;
 
 entity hack_rom is

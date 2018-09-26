@@ -9,12 +9,8 @@
 -- Target Devices: XC7A15T-1CPG236C
 -- Description: A RAM for the hack architecture. Also used for memory-mapping I/O
 ----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
-library work;
 use work.hack_shared.all;
 
 entity hack_ram is

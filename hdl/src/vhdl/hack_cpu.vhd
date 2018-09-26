@@ -9,13 +9,9 @@
 -- Target Devices: XC7A15T-1CPG236C
 -- Description: Designed by Shimon Shocken and Noam Nisan
 ----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_SIGNED.ALL;
-
-library work;
 use work.hack_shared.all;
 
 entity hack_cpu is
