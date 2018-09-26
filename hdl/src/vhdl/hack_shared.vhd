@@ -12,6 +12,7 @@
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use STD.TEXTIO.ALL; 
 
 package hack_shared is
     constant dataWidth : integer := 16;
@@ -24,33 +25,21 @@ package hack_shared is
     subtype romType is memoryType(0 to 2**addrWidthROM-1);
     subtype ramType is memoryType(0 to 2**addrWidthRAM-1);
 
-    impure function initMemoryFromFile(filename : in string, memDepth : in integer) return memoryType;
-    impure function initMemoryFromFile(filename : in string) return romType;
-    impure function initMemoryFromFile(filename : in string) return ramType;
+    impure function initMemoryFromFile(filename : in string; memDepth : in integer) return memoryType;
 end hack_shared;
 
 
 package body hack_shared is
-    impure function initMemoryFromFile(filename : in string, memDepth : in integer) return memoryType is
+    impure function initMemoryFromFile(filename : in string; memDepth : in integer) return memoryType is
         file data : text is in filename;
         variable dataLine : line;
-        variable memory : memoryType;
+        variable memory : memoryType(0 to memDepth-1);
     begin
         for I in 0 to memDepth-1 loop
             readline(data, dataLine);
             read(dataLine, memory(I));
         end loop;
         return memory;
-    end function initMemoryFromFile;
-
-    impure function initMemoryFromFile(filename : in string) return romType is
-    begin
-        return initMemoryFromFile(filename, 2**addrWidthROM);
-    end function initMemoryFromFile;
-
-    impure function initMemoryFromFile(filename : in string) return ramType is
-    begin
-        return initMemoryFromFile(filename, 2**addrWidthRAM);
     end function initMemoryFromFile;
 
 end hack_shared;
