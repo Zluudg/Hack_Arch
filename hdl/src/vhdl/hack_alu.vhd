@@ -14,25 +14,27 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
 use IEEE.STD_LOGIC_SIGNED.ALL;
 
+library work;
+use work.hack_shared.all;
+
 entity hack_alu is
-    port ( x : in STD_LOGIC_VECTOR(15 downto 0);
-           y : in STD_LOGIC_VECTOR(15 downto 0);
+    port ( x : in word;
+           y : in word;
            zx : in STD_LOGIC; -- Zero the x input
            nx : in STD_LOGIC; -- Bitwise NOT on the x input
            zy : in STD_LOGIC; -- Zero the y input
            ny : in STD_LOGIC; -- Bitwise NOT on the y input
            f : in STD_LOGIC;  -- If 1, x+y, else x&y
            nq : in STD_LOGIC; -- negate the output q
-           q : out STD_LOGIC_VECTOR(15 downto 0);
+           q : out word;
            zr : out STD_LOGIC; -- 1 if q is all 0's
            ng : out STD_LOGIC); -- 1 if q is negative (MSB of q is 1)
 end hack_alu;
 
 architecture Behavioral of hack_alu is
-    signal q_i : STD_LOGIC_VECTOR(15 downto 0);
+    signal q_i : word;
     signal ctrl : STD_LOGIC_VECTOR(5 downto 0) := (zx, nx, zy, ny, f, nq);
 begin
     with ctrl select q_i <=

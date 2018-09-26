@@ -12,19 +12,23 @@
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use STD.TEXTIO.ALL; 
+use IEEE.STD_LOGIC_TEXTIO.ALL;
+use STD.TEXTIO.ALL;
+
 
 package hack_shared is
     constant dataWidth : integer := 16;
     constant addrWidthROM : integer := 15;
     constant addrWidthRAM : integer := 15;
 
+    constant ramFile : string := "ram.dat";
+    constant romFile : string := "rom.dat";
+
     subtype word is STD_LOGIC_VECTOR(dataWidth-1 downto 0);
     
     type memoryType is array(integer range <>) of word;
     subtype romType is memoryType(0 to 2**addrWidthROM-1);
     subtype ramType is memoryType(0 to 2**addrWidthRAM-1);
-
     impure function initMemoryFromFile(filename : in string; memDepth : in integer) return memoryType;
 end hack_shared;
 

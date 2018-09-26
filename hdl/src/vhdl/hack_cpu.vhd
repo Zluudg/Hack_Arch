@@ -13,37 +13,39 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
 use IEEE.STD_LOGIC_SIGNED.ALL;
+
+library work;
+use work.hack_shared.all;
 
 entity hack_cpu is
     Port ( clk : in STD_LOGIC;
-           inM : in STD_LOGIC_VECTOR(15 downto 0);
-           instruction : in STD_LOGIC_VECTOR(15 downto 0);
+           inM : in word;
+           instruction : in word;
            reset : in STD_LOGIC;
-           outM : out STD_LOGIC_VECTOR(15 downto 0);
+           outM : out word;
            writeM : out STD_LOGIC;
-           addressM : out STD_LOGIC_VECTOR(14 downto 0);
-           pc : out STD_LOGIC_VECTOR(14 downto 0));
+           addressM : out STD_LOGIC_VECTOR(addrWidthRAM-1 downto 0);
+           pc : out STD_LOGIC_VECTOR(addrWidthROM-1 downto 0));
 end hack_cpu;
 
 architecture Mixed of hack_cpu is
     component hack_alu
-        port ( x : in STD_LOGIC_VECTOR(15 downto 0);
-               y : in STD_LOGIC_VECTOR(15 downto 0);
+        port ( x : in word;
+               y : in word;
                zx : in STD_LOGIC; -- Zero the x input
                nx : in STD_LOGIC; -- Bitwise NOT on the x input
                zy : in STD_LOGIC; -- Zero the y input
                ny : in STD_LOGIC; -- Bitwise NOT on the y input
                f : in STD_LOGIC;  -- If 1, x+y, else x&y
                nq : in STD_LOGIC; -- negate the output q
-               q : out STD_LOGIC_VECTOR(15 downto 0);
+               q : out word;
                zr : out STD_LOGIC; -- 1 if q is all 0's
                ng : out STD_LOGIC); -- 1 if q is negative (MSB of q is 1)
      end component;
 
     component hack_ctrl
-    port ( instruction : in STD_LOGIC_VECTOR(15 downto 0);
+    port ( instruction : in word;
            alu_flags : in STD_LOGIC_VECTOR(1 downto 0);
            writeM : out STD_LOGIC;
            loadPC : out STD_LOGIC;
@@ -61,11 +63,11 @@ architecture Mixed of hack_cpu is
     signal selAM : STD_LOGIC;
     signal selFB : STD_LOGIC;
     signal alu_ctrl : STD_LOGIC_VECTOR(5 downto 0);
-    signal q_i: STD_LOGIC_VECTOR(15 downto 0);
-    signal D_out : STD_LOGIC_VECTOR(15 downto 0);
-    signal A_out : STD_LOGIC_VECTOR(15 downto 0);
+    signal q_i: word;
+    signal D_out : word;
+    signal A_out : word;
     signal PC_i : STD_LOGIC_VECTOR(14 downto 0);
-    signal AmuxM : STD_LOGIC_VECTOR(15 downto 0);
+    signal AmuxM : word;
 begin
     CTRL: hack_ctrl
         port map(instruction => instruction,

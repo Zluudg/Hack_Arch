@@ -15,8 +15,11 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
+library work;
+use work.hack_shared.all;
+
 entity hack_ctrl is
-    Port ( instruction : in STD_LOGIC_VECTOR (15 downto 0);
+    Port ( instruction : in word;
            alu_flags : in STD_LOGIC_VECTOR (1 downto 0); -- MSB (zr, ng) LSB
            writeM : out STD_LOGIC;
            loadPC : out STD_LOGIC;

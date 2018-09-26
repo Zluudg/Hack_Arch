@@ -13,43 +13,29 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_TEXTIO.ALL;
-use STD.TEXTIO.ALL;
+
+library work;
+use work.hack_shared.all;
 
 entity hack_ram is
-    Generic(load_file_name : string;
-            addrWidth : integer := 15;
-            wordWidth : integer := 16);
     Port(clka : in STD_LOGIC;
          clkb : in STD_LOGIC;
          ena : in STD_LOGIC;
          enb : in STD_LOGIC;
          wea : in STD_LOGIC;
          web : in STD_LOGIC;
-         addra : in STD_LOGIC_VECTOR(addrWidth-1 downto 0);
-         addrb : in STD_LOGIC_VECTOR(addrWidth-1 downto 0);
-         dia : in STD_LOGIC_VECTOR(wordWidth-1 downto 0);
-         dib : in STD_LOGIC_VECTOR(wordWidth-1 downto 0);
-         doa : out STD_LOGIC_VECTOR(wordWidth-1 downto 0);
-         dob : out STD_LOGIC_VECTOR(wordWidth-1 downto 0));
+         addra : in STD_LOGIC_VECTOR(addrWidthRAM-1 downto 0);
+         addrb : in STD_LOGIC_VECTOR(addrWidthRAM-1 downto 0);
+         dia : in word;
+         dib : in word;
+         doa : out word;
+         dob : out word);
 end hack_ram;
 
 architecture Behavioral of hack_ram is
-    type ramType is array((2**addrWidth)-1 downto 0) of STD_LOGIC_VECTOR(wordWidth-1 downto 0);
-    
-    impure function InitRamFromFile(RamFileName : in string) return RamType is -- TODO check if working
-        FILE RamFile : text is in RamFileName;
-        variable RamFileLine : line;
-        variable RAM : RamType;
-    begin
-        for I in RamType'range loop
-            readline(RamFile, RamFileLine);
-            read(RamFileLine, RAM(I));
-        end loop;
-        return RAM;
-    end function;
-  
-    -- run init function if no generic input for text file name  
+    signal ram : RamType := initMemoryFromFile(ramFile, 2**addrWidthRAM-1);
+    attribute ram_style : string;
+    attribute ram_style of ram : signal is "block";  
 begin
 
     -- then processes for each clock
