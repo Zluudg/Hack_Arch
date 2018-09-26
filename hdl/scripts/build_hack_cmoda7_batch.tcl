@@ -1,10 +1,12 @@
 # run_bft_cmoda7_batch.tcl
 # NOTE: typical usage would be "vivado -mode tcl -source run_bft_cmoda7_batch.tcl"
+
 #
 # STEP#0: define output directory area.
 #
-set outputDir ./Tutorial_Created_Data/bft_output
+set outputDir ./bft_cmoda7_output
 file mkdir $outputDir
+
 #
 # STEP#1: setup design sources and constraints
 #
@@ -12,6 +14,7 @@ read_vhdl -library bftLib [ glob ./Sources/hdl/bftLib/*.vhdl ]
 read_vhdl ./Sources/hdl/bft.vhdl
 read_verilog [ glob ./Sources/hdl/*.v ]
 read_xdc ./Sources/bft_full_kintex7.xdc
+
 #
 # STEP#2: run synthesis, report utilization and timing estimates, write checkpoint
 design
