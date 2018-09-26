@@ -34,8 +34,6 @@ end hack_ram;
 
 architecture Behavioral of hack_ram is
     signal ram : RamType := initMemoryFromFile(ramFile, 2**addrWidthRAM-1);
-    attribute ram_style : string;
-    attribute ram_style of ram : signal is "block";  
 begin
 
     -- then processes for each clock
