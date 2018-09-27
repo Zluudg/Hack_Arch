@@ -3,7 +3,7 @@
 -- Engineer: Leon Fernandez
 -- 
 -- Create Date: 09/20/2018 10:39:00 PM
--- Design Name: Hack Shared
+-- Design Name: Hack Arch
 -- Module Name: hack_shared - Package
 -- Project Name: The Gravy Hack Project
 -- Target Devices: XC7A15T-1CPG236C 
