@@ -20,9 +20,11 @@ entity hack_ram is
          ena : in STD_LOGIC;
          enb : in STD_LOGIC;
          wea : in STD_LOGIC;
+         web: in STD_LOGIC;
          addra : in STD_LOGIC_VECTOR(addrWidthRAM-1 downto 0);
          addrb : in STD_LOGIC_VECTOR(addrWidthRAM-1 downto 0);
          dia : in word;
+         dib : in word;
          doa : out word;
          dob : out word);
 end hack_ram;
@@ -47,6 +49,9 @@ begin
         if rising_edge(clkb) then
 	    if enb = '1' then
                 dob <= ram(conv_integer(addrb));
+	        if web = '1' then
+	            ram(conv_integer(addrb)) <= dia;
+	        end if;
             end if;
         end if;
     end process b_side;
