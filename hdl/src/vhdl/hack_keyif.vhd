@@ -11,19 +11,68 @@
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 use work.hack_shared.all;
 
-entity hack_buffer is
+entity hack_keyif is
     port(clk : in STD_LOGIC;
-         rdy : in STD_LOGIC;
+         serving : in STD_LOGIC;
          keyIn : in word;
          req : out STD_LOGIC;
          keyOut : out word);
-end hack_buffer;
+end hack_keyif;
 
 architecture Behavioural of hack_keyif is
+    type state_type is (s_idle, s_requesting);
+    signal state : state_type;
+
+    signal keyReg : word := (others => '0');
+    signal dividerReg : UNSIGNED(10 downto 0) := (others =>'0');
+    signal reqClk : STD_LOGIC := '0';
 begin
 
--- TODO Should request RAM access every 1024th clock cycle
---      This is roughly every 10 ms if clk=12MHz
+    P_KEY_REG: process(clk)
+    begin
+        if rising_edge(clk) then
+            keyReg <= keyIn;
+        end if;
+    end process P_KEY_REG;
+    keyOut <= keyReg;
+
+    P_DIVIDER: process(clk)
+    begin
+        if rising_edge(clk) then
+            dividerReg <= dividerReg + 1;
+        end if;
+    end process P_DIVIDER;
+    reqClk <= dividerReg(10);
+
+    P_UPDATE: process(clk)
+    begin
+        case state is
+            when s_idle =>
+                if reqClk'event and reqClk='1' then
+                    if serving='1' then
+                        req <= '0';
+                        state <= s_idle;
+                    else
+                        req <= '1';
+                        state <= s_requesting;
+                    end if;
+                else
+                    state <= s_idle;
+                end if;
+            when s_requesting =>
+                if serving='0' then
+                    req <= '0';
+                    state <= s_idle;
+                else
+                    req <= '1';
+                    state <= s_requesting;
+                end if;
+            when others =>
+                req <= '0';
+                state <= s_idle;
+        end case;
+    end process P_UPDATE;
 end Behavioural;
