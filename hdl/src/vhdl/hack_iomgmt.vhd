@@ -56,7 +56,7 @@ begin
                 when s_handleBuf =>
                     next_state <= s_idle;
                 when others =>
-                    next_stace <= s_idle;
+                    next_state <= s_idle;
             end case;
         end if;
     end process P_DECODE_NEXT;

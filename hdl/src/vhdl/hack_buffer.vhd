@@ -23,7 +23,7 @@ entity hack_buffer is
          addr : out STD_LOGIC_VECTOR(addrWidthRAM-1 downto 0);
          reqWord : out STD_LOGIC;
          rdy5bit : out STD_LOGIC;
-         bufOut : out STD_LOGIC_VECTOR(5 downto 0));
+         bufOut : out STD_LOGIC_VECTOR(4 downto 0));
 end hack_buffer;
 
 architecture Behavioural of hack_buffer is
@@ -52,19 +52,19 @@ begin
             when s_ready =>
                 if req5bit = '0' then
                     next_state <= s_idle;
-                    buff <= buff srl 5;
+                    buff(14 downto 0) <= buff(19 downto 5);
                     freeSlots <= freeSlots + 5;
                 else
                     next_state <= s_ready;
                 end if; 
             when s_fetch =>
-                if wordRdy = '1' then
+                if rdyWord = '1' then
                     if address < screenEnd then
                         address <= address + 1;
                     else
                         address <= screenStart;
                     end if;
-                    buff(35-freeSlots downto 29-freeSlots) <= wordIn;
+                    buff(35-freeSlots downto 20-freeSlots) <= wordIn;
                     freeSlots <= freeSlots - dataWidth;
                     if req5bit = '1' then
                         next_state <= s_ready;
