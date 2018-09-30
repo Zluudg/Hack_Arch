@@ -23,4 +23,7 @@ end hack_buffer;
 
 architecture Behavioural of hack_keyif is
 begin
+
+-- TODO Should request RAM access every 1024th clock cycle
+--      This is roughly every 10 ms if clk=12MHz
 end Behavioural;
