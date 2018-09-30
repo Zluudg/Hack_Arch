@@ -19,10 +19,10 @@ entity hack_buffer is
     port(clk : in STD_LOGIC;
          wordIn : in word;
          req5bit : in STD_LOGIC;
-         rdyWord : in STD_LOGIC;
+         servingWord : in STD_LOGIC;
          addr : out STD_LOGIC_VECTOR(addrWidthRAM-1 downto 0);
          reqWord : out STD_LOGIC;
-         rdy5bit : out STD_LOGIC;
+         serving5bit : out STD_LOGIC;
          bufOut : out STD_LOGIC_VECTOR(4 downto 0));
 end hack_buffer;
 
@@ -91,14 +91,14 @@ begin
         case state is
             when s_idle =>
                 reqWord <= '0';
-                rdy5bit <= '0';
+                serving5bit <= '0';
             when s_ready =>
                 reqWord <= '0';
-                rdy5bit <= '1';
+                serving5bit <= '1';
                 bufOut <= buff(4 downto 0);
             when s_fetch =>
                 reqWord <= '1';
-                rdy5bit <= '0';
+                serving5bit <= '0';
                 addr <= STD_LOGIC_VECTOR(to_unsigned(address, addrWidthRAM)); 
             when others =>
         end case;

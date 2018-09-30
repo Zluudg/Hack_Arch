@@ -21,8 +21,8 @@ entity hack_iomgmt is
          reqKey : in STD_LOGIC;
          dataKey : in word;
          dataRAM : inout word;
-         rdyBuf : out STD_LOGIC;
-         rdyKey : out STD_LOGIC;
+         servingBuf : out STD_LOGIC;
+         servingKey : out STD_LOGIC;
          dataBuf : out word;
          enRAM : out STD_LOGIC;
          wenRAM : out STD_LOGIC;
@@ -48,13 +48,21 @@ begin
                         next_state <= s_idle;
                     end if;
                 when s_handleKey =>
-                    if reqBuf = '1' then
-                        next_state <= s_handleBuf;
+                    if reqKey='0' then
+                        if reqBuf = '1' then
+                            next_state <= s_handleBuf;
+                        else
+                            next_state <= s_idle;
+                        end if;
                     else
-                        next_state <= s_idle;
+                        next_state <= s_handleKey;
                     end if;
                 when s_handleBuf =>
-                    next_state <= s_idle;
+                    if reqBuf='0' then
+                        next_state <= s_idle;
+                    else
+                        next_state <= s_handleBuf;
+                    end if;
                 when others =>
                     next_state <= s_idle;
             end case;
@@ -72,26 +80,26 @@ begin
     begin
         case state is
             when s_idle =>
-                rdyKey <= '0';
-                rdyBuf <= '0';
+                servingKey <= '0';
+                servingBuf <= '0';
                 enRAM <= '0';
             when s_handleKey =>
-                rdyKey <= '1';
-                rdyBuf <= '0';
+                servingKey <= '1';
+                servingBuf <= '0';
                 enRAM <= '1';
                 wenRAM <= '1';
                 dataRAM <= dataKey;
                 addrRAM <= "110000000000000"; --address in RAM where keyboard output resides
             when s_handleBuf =>
-                rdyKey <= '0';
-                rdyBuf <= '1';
+                servingKey <= '0';
+                servingBuf <= '1';
                 enRAM <= '1';
                 wenRAM <= '0';
                 dataBuf <= dataRAM;
                 addrRAM <= reqAddrBuf;
             when others =>
-                rdyKey <= '0';
-                rdyBuf <= '0';
+                servingKey <= '0';
+                servingBuf <= '0';
                 enRAM <= '0';
                 wenRAM <= '0';
                 dataRAM <= (others => '0');
