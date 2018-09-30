@@ -12,6 +12,7 @@
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 use work.hack_shared.all;
 
 entity hack_buffer is
@@ -30,38 +31,77 @@ architecture Behavioural of hack_buffer is
     constant screenEnd : integer := 17663;
 
     type state_type is (s_idle, s_ready, s_fetch);
+    signal state : state_type := s_idle;
+    signal next_state : state_type := s_idle;
 
     signal address : integer := screenStart;
     signal freeSlots : integer := 20;
-    signal buff : STD_LOGIC_VECTOR(19 downto 0);
-    signal state : state_type := s_idle;
-    signal next_state : state_type := s_idle;
-    signal bufOut : STD_LOGIC_VECTOR(4 downto 0);
-    signal bufReq : STD_LOGIC := '0';
-    signal bufRdy : STD_LOGIC := '0';
+    signal buff : STD_LOGIC_VECTOR(19 downto 0) := (others => '0');
 begin
-    BUF: process (clk)
+    P_DECODE_NEXT: process (clk)
     begin
         case state is
             when s_idle =>
                 if freeSlots >= 16 then
                     next_state <= s_fetch;
-                    bufRdy <= '0';
-                elsif bufReq <= '1' then
+                elsif req5bit = '1' then
                     next_state <= s_ready;
-                    buff <= buff srl 5;
-                    bufRdy <= '1';
                 else
                     next_state <= s_idle;
                 end if;
             when s_ready =>
-                if bufReq  '0' then
+                if req5bit = '0' then
                     next_state <= s_idle;
-                    bufRdy <= '0'; 
-            when s_fetch => 
-                
+                    buff <= buff srl 5;
+                    freeSlots <= freeSlots + 5;
+                else
+                    next_state <= s_ready;
+                end if; 
+            when s_fetch =>
+                if wordRdy = '1' then
+                    if address < screenEnd then
+                        address <= address + 1;
+                    else
+                        address <= screenStart;
+                    end if;
+                    buff(35-freeSlots downto 29-freeSlots) <= wordIn;
+                    freeSlots <= freeSlots - dataWidth;
+                    if req5bit = '1' then
+                        next_state <= s_ready;
+                    else
+                        next_state <= s_idle;
+                    end if;
+                else
+                    next_state <= s_fetch;
+                end if;
+            when others =>
+                next_state <= s_idle;    
         end case;
-        bufOut <= buff(4 downto 0);
-        state <= next_state;
-    end process BUF;
+    end process P_DECODE_NEXT;
+
+    P_UPDATE: process(clk)
+    begin
+        if rising_edge(clk) then
+            state <= next_state;
+        end if;
+    end process P_UPDATE;
+
+    P_DECODE_OUT: process(state)
+    begin
+        case state is
+            when s_idle =>
+                reqWord <= '0';
+                rdy5bit <= '0';
+            when s_ready =>
+                reqWord <= '0';
+                rdy5bit <= '1';
+                bufOut <= buff(4 downto 0);
+            when s_fetch =>
+                reqWord <= '1';
+                rdy5bit <= '0';
+                addr <= STD_LOGIC_VECTOR(to_unsigned(address, addrWidthRAM)); 
+            when others =>
+        end case;
+    end process P_DECODE_OUT;
+
 end Behavioural; 
