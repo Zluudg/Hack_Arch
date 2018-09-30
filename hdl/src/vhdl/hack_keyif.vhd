@@ -33,7 +33,7 @@ begin
 
     P_KEY_REG: process(clk)
     begin
-        if rising_edge(clk) then
+        if rising_edge(clk) and state=s_idle then
             keyReg <= keyIn;
         end if;
     end process P_KEY_REG;
@@ -47,28 +47,20 @@ begin
     end process P_DIVIDER;
     reqClk <= dividerReg(10);
 
-    P_UPDATE: process(clk)
+    P_UPDATE: process(reqClk, serving)
     begin
         case state is
             when s_idle =>
                 if reqClk'event and reqClk='1' then
-                    if serving='1' then
-                        req <= '0';
-                        state <= s_idle;
-                    else
-                        req <= '1';
+                    if serving='0' then
                         state <= s_requesting;
+                        req <= '1';
                     end if;
-                else
-                    state <= s_idle;
-                end if;
+                end if;        
             when s_requesting =>
                 if serving='0' then
-                    req <= '0';
                     state <= s_idle;
-                else
-                    req <= '1';
-                    state <= s_requesting;
+                    req <= '0';
                 end if;
             when others =>
                 req <= '0';
